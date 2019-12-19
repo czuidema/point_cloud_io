@@ -34,15 +34,6 @@ bool Read::readParameters() {
   allParametersRead = nodeHandle_.getParam("topic", pointCloudTopic_) && allParametersRead;
   allParametersRead = nodeHandle_.getParam("frame", pointCloudFrameId_) && allParametersRead;
 
-  /*double updateRate;
-  nodeHandle_.param("rate", updateRate, 0.0);
-  if (updateRate == 0.0) {
-    isContinuouslyPublishing_ = false;
-  } else {
-    isContinuouslyPublishing_ = true;
-    updateDuration_.fromSec(1.0 / updateRate);
-  }*/
-
   if (!allParametersRead) {
     ROS_WARN(
         "Could not read all parameters. Typical command-line usage:\n"
