@@ -11,6 +11,7 @@
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <std_srvs/Trigger.h>
 
 namespace point_cloud_io {
 
@@ -37,7 +38,7 @@ class Read {
   /*!
    * Initializes node.
    */
-  void initialize();
+  bool initialize();
 
   /*!
    * Read the point cloud from a .ply or .vtk file.
@@ -52,6 +53,9 @@ class Read {
    * @param timerEvent the timer event.
    */
   void timerCallback(const ros::TimerEvent& timerEvent);
+
+  bool readServiceCallback(std_srvs::Trigger::Request &req,
+                                   std_srvs::Trigger::Response &res);
 
   /*!
    * Publish the point cloud as a PointCloud2.
@@ -88,6 +92,9 @@ class Read {
 
   //! Duration between publishing steps.
   ros::Duration updateDuration_;
+
+  // service
+  ros::ServiceServer pub_srv_;
 };
 
 }  // namespace point_cloud_io

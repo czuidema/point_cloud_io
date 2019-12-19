@@ -53,19 +53,13 @@ class Write {
   std::string folderPath_;
 
   //! Point cloud file prefix.
-  std::string filePrefix_;
+  std::string fileName_;
 
   //! Point cloud file ending.
   std::string fileEnding_;
 
   //! Point cloud counter.
   unsigned int counter_ = 0;
-
-  //! Settings for generating file name.
-  bool addCounterToPath_ = true;
-  bool addFrameIdToPath_ = false;
-  bool addStampSecToPath_ = false;
-  bool addStampNSecToPath_ = false;
 };
 
 }  // namespace point_cloud_io

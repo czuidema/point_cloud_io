@@ -24,7 +24,8 @@ Read::Read(ros::NodeHandle& nodeHandle) : nodeHandle_(nodeHandle), pointCloudMes
     ros::requestShutdown();
   }
   pointCloudPublisher_ = nodeHandle_.advertise<sensor_msgs::PointCloud2>(pointCloudTopic_, 1, true);
-  initialize();
+  pub_srv_ = nodeHandle_.advertiseService(
+          "readAndSendPly", &Read::readServiceCallback, this);
 }
 
 bool Read::readParameters() {
@@ -33,14 +34,14 @@ bool Read::readParameters() {
   allParametersRead = nodeHandle_.getParam("topic", pointCloudTopic_) && allParametersRead;
   allParametersRead = nodeHandle_.getParam("frame", pointCloudFrameId_) && allParametersRead;
 
-  double updateRate;
+  /*double updateRate;
   nodeHandle_.param("rate", updateRate, 0.0);
   if (updateRate == 0.0) {
     isContinuouslyPublishing_ = false;
   } else {
     isContinuouslyPublishing_ = true;
     updateDuration_.fromSec(1.0 / updateRate);
-  }
+  }*/
 
   if (!allParametersRead) {
     ROS_WARN(
@@ -56,26 +57,11 @@ bool Read::readParameters() {
   return true;
 }
 
-void Read::initialize() {
-  if (!readFile(filePath_, pointCloudFrameId_)) {
-    ros::requestShutdown();
-  }
-
-  if (isContinuouslyPublishing_) {
-    timer_ = nodeHandle_.createTimer(updateDuration_, &Read::timerCallback, this);
-  } else {
-    ros::Duration(1.0).sleep();  // Need this to get things ready before publishing.
-    if (!publish()) {
-      ROS_ERROR("Something went wrong when trying to read and publish the point cloud file.");
-    }
-    ros::requestShutdown();
-  }
-}
-
 bool Read::readFile(const std::string& filePath, const std::string& pointCloudFrameId) {
   if (filePath.find(".ply") != std::string::npos) {
+      std::cout << "File path is " << filePath << std::endl;
     // Load .ply file.
-    pcl::PointCloud<pcl::PointXYZRGBNormal> pointCloud;
+    pcl::PointCloud<pcl::PointXYZRGBNormal> pointCloud; // try PointXYZ instead of PointXYZRGBNormal
     if (pcl::io::loadPLYFile(filePath, pointCloud) != 0) {
       return false;
     }
@@ -105,6 +91,18 @@ void Read::timerCallback(const ros::TimerEvent& /*timerEvent*/) {
     ROS_ERROR("Something went wrong when trying to read and publish the point cloud file.");
   }
 }
+
+
+bool Read::readServiceCallback(std_srvs::Trigger::Request &req,
+                         std_srvs::Trigger::Response &res){
+    if(!readFile(filePath_, pointCloudFrameId_)){
+        ROS_ERROR("Something went wrong when trying to read the point cloud file.");
+    }
+    if (!publish()) {
+      ROS_ERROR("Something went wrong when trying to publish the point cloud file.");
+    }
+};
+
 
 bool Read::publish() {
   pointCloudMessage_->header.stamp = ros::Time::now();

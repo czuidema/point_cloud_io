@@ -1,24 +1,18 @@
 Point Cloud IO
 ======================
+This is a forked repository from [ANYbotics/point_cloud_io](https://github.com/ANYbotics/point_cloud_io).
 
 Overview
 ---------------
 
 These are two simple [ROS] point cloud helper nodes. **_read_** reads a point cloud from file (ply or vtk) and publishes it as a [sensor_msgs/PointCloud2] message. **_write_** subscribes to a [sensor_msgs/PointCloud2] topic and writes received messages to seperate files (ply, pcd).
 
-For visualization, make sure to set the **Decay Time** in the **PointCloud2** tab in [rviz] to a high number to get the point cloud visible for a long time.
+The forked version here has been simplyfied and is used via a service call.
+When the service is called a `PLY` file is read from an (in launch file) pre-defined filename. This cloud is sent via message to the writer node and saved there (as described above). The use case is mostly to send a mesh from a planner to a centralized server node which uses the mesh for an optimizing problem.
 
 The point cloud io package has been tested under ROS Melodic and Ubuntu 18.04. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
 
-**Author: Péter Fankhauser, Remo Diethelm<br />
-Affiliation: [ANYbotics](https://www.anybotics.com/)<br />
-Maintainer: Remo Diethelm, rdiethelm@anybotics.com<br />**
-
-This projected was initially developed at ETH Zurich (Autonomous Systems Lab & Robotic Systems Lab).
-
-[This work is conducted as part of ANYmal Research, a community to advance legged robotics.](https://www.anymal-research.org/)
-
-The source code is released under a [BSD 3-Clause license](LICENSE).
+*Please find the list of authors and the license information on the original repository!*
 
 Installation
 ------------
@@ -63,18 +57,9 @@ Subscribe and save point clouds to a ply file with
 
 Optionally, you can set parameters to fit the point cloud file names to your needs:
 
-- `_file_prefix:=my_prefix` (default: "point_cloud")
+- `_file_filename:=my_filename` (default: "point_cloud")
 - `_file_ending:=my_ending` (default: "ply", currently only format which is supported for writing)
-- `_add_counter_to_path:=false` (default: `true`)
-- `_add_frame_id_to_path:=true` (default: `false`)
-- `_add_stamp_sec_to_path:=true` (default: `false`)
-- `_add_stamp_nsec_to_path:=true` (default: `false`)
 
-
-Bugs & Feature Requests
-------------
-
-Please report bugs and request features using the [Issue Tracker](https://github.com/anybotics/point_cloud_io/issues).
 
 
 [ROS]: http://www.ros.org

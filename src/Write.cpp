@@ -17,7 +17,7 @@
 
 namespace point_cloud_io {
 
-Write::Write(ros::NodeHandle& nodeHandle) : nodeHandle_(nodeHandle), filePrefix_("point_cloud"), fileEnding_("ply") {
+Write::Write(ros::NodeHandle& nodeHandle) : nodeHandle_(nodeHandle), fileName_("point_cloud"), fileEnding_("ply") {
   if (!readParameters()) {
     ros::requestShutdown();
   }
@@ -30,12 +30,8 @@ bool Write::readParameters() {
   allParametersRead = nodeHandle_.getParam("topic", pointCloudTopic_) && allParametersRead;
   allParametersRead = nodeHandle_.getParam("folder_path", folderPath_) && allParametersRead;
 
-  nodeHandle_.getParam("file_prefix", filePrefix_);
+  nodeHandle_.getParam("file_name", fileName_);
   nodeHandle_.getParam("file_ending", fileEnding_);
-  nodeHandle_.getParam("add_counter_to_path", addCounterToPath_);
-  nodeHandle_.getParam("add_frame_id_to_path", addFrameIdToPath_);
-  nodeHandle_.getParam("add_stamp_sec_to_path", addStampSecToPath_);
-  nodeHandle_.getParam("add_stamp_nsec_to_path", addStampNSecToPath_);
 
   if (!allParametersRead) {
     ROS_WARN(
@@ -43,12 +39,8 @@ bool Write::readParameters() {
         "rosrun point_cloud_io write"
         " _topic:=/my_topic"
         " _folder_path:=/home/user/my_point_clouds"
-        " (optional: _file_prefix:=my_prefix"
-        " _file_ending:=my_ending"
-        " _add_counter_to_path:=true/false"
-        " _add_frame_id_to_path:=true/false"
-        " _add_stamp_sec_to_path:=true/false"
-        " _add_stamp_nsec_to_path:=true/false)");
+        " _file_name:=my_filename"
+        " _file_ending:=my_ending");
     return false;
   }
 
@@ -60,22 +52,7 @@ void Write::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   std::cout << folderPath_ << std::endl;
   std::stringstream filePath;
   filePath << folderPath_ << "/";
-  if (!filePrefix_.empty()) {
-    filePath << filePrefix_;
-  }
-  if (addCounterToPath_) {
-    filePath << "_" << counter_;
-    counter_++;
-  }
-  if (addFrameIdToPath_) {
-    filePath << "_" << cloud->header.frame_id;
-  }
-  if (addStampSecToPath_) {
-    filePath << "_" << cloud->header.stamp.sec;
-  }
-  if (addStampNSecToPath_) {
-    filePath << "_" << cloud->header.stamp.nsec;
-  }
+  filePath << fileName_;
   filePath << ".";
   filePath << fileEnding_;
 
