@@ -40,27 +40,6 @@ Usage
 To create your own launch-file, you can use the examples from `point_cloud_io/launch/...`.
 
 
-### Read
-
-Load and publish a ply or vtk file with
-
-    rosrun point_cloud_io read _file_path:=/home/user/my_point_cloud.ply _topic:=/my_topic _frame:=/sensor_frame
-
-Optionally, you can also add `_rate:=1.0` to have the node publish your point cloud at the specified rate.
-
-
-### Write
-
-Subscribe and save point clouds to a ply file with
-
-    rosrun point_cloud_io write _topic:=/your_topic _folder_path:=/home/user/my_point_clouds
-
-Optionally, you can set parameters to fit the point cloud file names to your needs:
-
-- `_file_filename:=my_filename` (default: "point_cloud")
-- `_file_ending:=my_ending` (default: "ply", currently only format which is supported for writing)
-
-
 
 [ROS]: http://www.ros.org
 [rviz]: http://wiki.ros.org/rviz
