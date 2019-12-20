@@ -11,6 +11,7 @@
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <radiation_srvs/MeshInfo.h>
 
 namespace point_cloud_io {
 
@@ -57,6 +58,8 @@ class Write {
 
   //! Point cloud file ending.
   std::string fileEnding_;
+
+  std::string filePathComplete_;
 
   //! Point cloud counter.
   unsigned int counter_ = 0;

@@ -15,10 +15,10 @@
   <maintainer email="czuidema@ethz.ch">Christoph Zuidema</maintainer>
 
   <buildtool_depend>catkin</buildtool_depend>
-
-  <build_depend>cmake_clang_tools</build_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
 
   <depend>roscpp</depend>
+  <depend>radiation_srvs</depend>
   <depend>pcl_ros</depend>
   <depend>sensor_msgs</depend>
   <depend>std_srvs</depend>

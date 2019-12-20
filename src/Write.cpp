@@ -56,6 +56,8 @@ void Write::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   filePath << ".";
   filePath << fileEnding_;
 
+  filePathComplete_ = filePath.str();
+
   if (fileEnding_ == "ply") {
     // Write .ply file.
     pcl::PointCloud<pcl::PointXYZRGBNormal> pclCloud;
@@ -78,6 +80,13 @@ void Write::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
     return;
   }
 
+  radiation_srvs::MeshInfo meshInfo;
+  meshInfo.request.meshSaved = true;
+  meshInfo.request.fileName = filePathComplete_;
+  if(!ros::service::call("/radiation_estimator/meshWritten",
+                                             meshInfo)){
+      ROS_ERROR("Could not send info that mesh file is saved in radiation estimator folder.");
+  }
   ROS_INFO_STREAM("Saved point cloud to " << filePath.str() << ".");
 }
 
