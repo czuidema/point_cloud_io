@@ -58,6 +58,8 @@ class Read {
    */
   bool readFile(const std::string& filePath, const std::string& pointCloudFrameId);
 
+  bool readFileDebug(const std::string& filePath, const std::string& pointCloudFrameId);
+
   /*!
    * Timer callback function.
    * @param timerEvent the timer event.

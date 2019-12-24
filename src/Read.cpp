@@ -61,6 +61,29 @@ bool Read::readFile(const std::string& filePath, const std::string& pointCloudFr
   return true;
 }
 
+
+bool Read::readFileDebug(const std::string& filePath, const std::string& pointCloudFrameId) {
+    std::cout << "Load cloud from: " << filePath << std::endl;
+    // Load input file into a PointCloud<T> with an appropriate type
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+
+
+    pcl::PolygonMesh polymesh;
+    std::cout << "Loading...\n";
+    pcl::io::loadPolygonFilePLY(filePath, polymesh);
+    std::cout << "loaded." << std::endl;
+
+    // Load .ply file.
+    //pcl::PointCloud<pcl::PointXYZRGBNormal> pointCloud; // try PointXYZ instead of PointXYZRGBNormal
+    auto pointCloud2 = polymesh.cloud;
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud;
+    pcl::fromPCLPointCloud2( pointCloud2, *pointCloud);
+    std::cout << "converted." << std::endl;
+    return true;
+}
+
+
 void Read::timerCallback(const ros::TimerEvent& /*timerEvent*/) {
   if (!publish()) {
     ROS_ERROR("Something went wrong when trying to read and publish the point cloud file.");
@@ -70,7 +93,7 @@ void Read::timerCallback(const ros::TimerEvent& /*timerEvent*/) {
 
 bool Read::readServiceCallback(std_srvs::Trigger::Request &req,
                          std_srvs::Trigger::Response &res){
-    if(!readFile(filePath_, pointCloudFrameId_)){
+    if(!readFileDebug(filePath_, pointCloudFrameId_)){
         ROS_ERROR("Something went wrong when trying to read the point cloud file.");
     }
     if (!publish()) {
