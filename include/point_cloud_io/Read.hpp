@@ -8,10 +8,20 @@
 
 #pragma once
 
+#include <pcl/io/ply_io.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl_conversions/pcl_conversions.h>
+
+
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/point_cloud2_iterator.h>
+#include <pcl_msgs/PolygonMesh.h>
+
 #include <std_srvs/Trigger.h>
+#include <shape_msgs/Mesh.h>
 
 namespace point_cloud_io {
 
@@ -67,10 +77,11 @@ class Read {
   ros::NodeHandle& nodeHandle_;
 
   //! Point cloud message to publish.
-  sensor_msgs::PointCloud2::Ptr pointCloudMessage_;
+  pcl::PolygonMesh::Ptr polygonMesh_;
+  pcl_msgs::PolygonMesh polygonMeshMessage_;
 
   //! Point cloud publisher.
-  ros::Publisher pointCloudPublisher_;
+  ros::Publisher polygonMeshPublisher_;
 
   //! Timer for publishing the point cloud.
   ros::Timer timer_;
@@ -79,7 +90,7 @@ class Read {
   std::string filePath_;
 
   //! Point cloud topic to be published at.
-  std::string pointCloudTopic_;
+  std::string polygonMeshTopic_;
 
   //! Point cloud frame id.
   std::string pointCloudFrameId_;

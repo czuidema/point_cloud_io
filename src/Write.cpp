@@ -21,13 +21,13 @@ Write::Write(ros::NodeHandle& nodeHandle) : nodeHandle_(nodeHandle), fileName_("
   if (!readParameters()) {
     ros::requestShutdown();
   }
-  pointCloudSubscriber_ = nodeHandle_.subscribe(pointCloudTopic_, 1, &Write::pointCloudCallback, this);
-  ROS_INFO_STREAM("Subscribed to topic \"" << pointCloudTopic_ << "\".");
+  polygonSubscriber_ = nodeHandle_.subscribe(polygonMeshTopic_, 1, &Write::polygonCallback, this);
+  ROS_INFO_STREAM("Subscribed to polygonMeshTopic \"" << polygonMeshTopic_ << "\".");
 }
 
 bool Write::readParameters() {
   bool allParametersRead = true;
-  allParametersRead = nodeHandle_.getParam("topic", pointCloudTopic_) && allParametersRead;
+  allParametersRead = nodeHandle_.getParam("topic", polygonMeshTopic_) && allParametersRead;
   allParametersRead = nodeHandle_.getParam("folder_path", folderPath_) && allParametersRead;
 
   nodeHandle_.getParam("file_name", fileName_);
@@ -47,47 +47,35 @@ bool Write::readParameters() {
   return true;
 }
 
-void Write::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
-  ROS_INFO_STREAM("Received point cloud with " << cloud->height * cloud->width << " points.");
-  std::cout << folderPath_ << std::endl;
-  std::stringstream filePath;
-  filePath << folderPath_ << "/";
-  filePath << fileName_;
-  filePath << ".";
-  filePath << fileEnding_;
+void Write::polygonCallback(const pcl_msgs::PolygonMesh& polygon){
+    ROS_INFO("Got a polygon message.");
 
-  filePathComplete_ = filePath.str();
+    pcl::PolygonMesh receivedMesh;
+    pcl_conversions::toPCL (polygon, receivedMesh);
+    std::cout << folderPath_ << std::endl;
 
-  if (fileEnding_ == "ply") {
-    // Write .ply file.
-    pcl::PointCloud<pcl::PointXYZRGBNormal> pclCloud;
-    pcl::fromROSMsg(*cloud, pclCloud);
+    std::stringstream filePath;
+    filePath << folderPath_ << "/";
+    filePath << fileName_;
+    filePath << "_polygon.";
+    filePath << fileEnding_;
 
-    pcl::PLYWriter writer;
-    bool binary = false;
-    bool use_camera = false;
-    if (writer.write(filePath.str(), pclCloud, binary, use_camera) != 0) {
-      ROS_ERROR("Something went wrong when trying to write the point cloud file.");
-      return;
+    filePathComplete_ = filePath.str();
+    if (fileEnding_ == "ply") {
+        pcl::io::savePLYFile(filePathComplete_, receivedMesh);
     }
-  } else if (fileEnding_ == "pcd") {
-    // Write pcd file
-    pcl::PointCloud<pcl::PointXYZRGBNormal> pclCloud;
-    pcl::fromROSMsg(*cloud, pclCloud);
-    pcl::io::savePCDFile(filePath.str(), pclCloud);
-  } else {
-    ROS_ERROR_STREAM("Data format not supported.");
-    return;
-  }
+    else{
+        ROS_ERROR_STREAM("Data format not supported.");
+    }
 
-  radiation_srvs::MeshInfo meshInfo;
-  meshInfo.request.meshSaved = true;
-  meshInfo.request.fileName = filePathComplete_;
-  if(!ros::service::call("/radiation_estimator/meshWritten",
-                                             meshInfo)){
-      ROS_ERROR("Could not send info that mesh file is saved in radiation estimator folder.");
-  }
-  ROS_INFO_STREAM("Saved point cloud to " << filePath.str() << ".");
+    radiation_srvs::MeshInfo meshInfo;
+    meshInfo.request.meshSaved = true;
+    meshInfo.request.fileName = filePathComplete_;
+    if(!ros::service::call("/radiation_estimator/meshWritten",
+                                               meshInfo)){
+        ROS_ERROR("Could not send info that mesh file is saved in radiation estimator folder.");
+    }
+    ROS_INFO_STREAM("Saved point cloud to " << filePath.str() << ".");
 }
 
 }  // namespace point_cloud_io

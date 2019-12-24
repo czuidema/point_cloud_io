@@ -12,6 +12,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <radiation_srvs/MeshInfo.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 namespace point_cloud_io {
 
@@ -39,16 +40,16 @@ class Write {
    * Point cloud callback function
    * @param cloud point cloud message.
    */
-  void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
+  void polygonCallback(const pcl_msgs::PolygonMesh& polygon);
 
   //! ROS node handle.
   ros::NodeHandle& nodeHandle_;
 
   //! Point cloud subscriber.
-  ros::Subscriber pointCloudSubscriber_;
+  ros::Subscriber polygonSubscriber_;
 
   //! Point cloud topic to subscribe to.
-  std::string pointCloudTopic_;
+  std::string polygonMeshTopic_;
 
   //! Path to the point cloud folder.
   std::string folderPath_;
