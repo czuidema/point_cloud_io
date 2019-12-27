@@ -57,7 +57,7 @@ void Write::polygonCallback(const pcl_msgs::PolygonMesh& polygon){
     std::stringstream filePath;
     filePath << folderPath_ << "/";
     filePath << fileName_;
-    filePath << "_polygon.";
+	filePath << ".";
     filePath << fileEnding_;
 
     filePathComplete_ = filePath.str();
