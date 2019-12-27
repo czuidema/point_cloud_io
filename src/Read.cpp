@@ -61,6 +61,7 @@ bool Read::readFile(const std::string& filePath, const std::string& pointCloudFr
   return true;
 }
 
+
 void Read::timerCallback(const ros::TimerEvent& /*timerEvent*/) {
   if (!publish()) {
     ROS_ERROR("Something went wrong when trying to read and publish the point cloud file.");

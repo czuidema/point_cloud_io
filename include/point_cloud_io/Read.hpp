@@ -12,6 +12,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl/conversions.h>
 
 
 // ROS
@@ -57,6 +58,8 @@ class Read {
    * @return true if successful.
    */
   bool readFile(const std::string& filePath, const std::string& pointCloudFrameId);
+
+  bool readFileDebug(const std::string& filePath, const std::string& pointCloudFrameId);
 
   /*!
    * Timer callback function.
